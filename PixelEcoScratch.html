@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixelEcoScratch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --forest:#1B4332;
+    --moss:#40663f;
+    --leaf:#74C69D;
+    --leaf-light:#B7E4C7;
+    --sun:#FFD60A;
+    --soil:#7F5539;
+    --sky:#DFF3E8;
+    --sky-deep:#BFE3D0;
+    --ink:#16281f;
+    --paper:#F4FBF6;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--sky);
+    color:var(--ink);
+    font-family:'Quicksand', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ---------- Pixel decor ---------- */
+  .pixel{ image-rendering:pixelated; }
+
+  /* ---------- Ambient floating particles (behind everything, never over the QR) ---------- */
+  .leaf-field{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  .leaf-particle{
+    position:absolute;
+    bottom:-24px;
+    width:10px;
+    height:10px;
+    opacity:.55;
+    animation-name: leafRise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes leafRise{
+    0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    12%{ opacity:.6; }
+    88%{ opacity:.4; }
+    100%{ transform:translateY(-115vh) translateX(18px) rotate(200deg); opacity:0; }
+  }
+
+  /* every section that should sit above the ambient particles */
+  .sky-strip, header, .qr-section, .info-row, .ground, footer{
+    position:relative;
+    z-index:1;
+  }
+
+  .sky-strip{
+    position:relative;
+    height:70px;
+    background:linear-gradient(180deg, var(--sky-deep), var(--sky));
+    overflow:hidden;
+  }
+
+  .cloud{
+    position:absolute;
+    top:14px;
+    width:56px;
+    height:24px;
+    background:#ffffff;
+    box-shadow:
+      8px -8px 0 0 #ffffff,
+      16px 0 0 0 #ffffff,
+      24px -8px 0 0 #ffffff,
+      32px 0 0 0 #ffffff;
+    opacity:.85;
+  }
+  .cloud.c1{ left:6%; animation: drift 26s linear infinite; }
+  .cloud.c2{ left:55%; top:28px; transform:scale(.7); animation: drift 34s linear infinite reverse; }
+  .cloud.c3{ left:78%; top:6px; transform:scale(.5); animation: drift 20s linear infinite; }
+
+  @keyframes drift{
+    0%{ transform:translateX(0) scale(var(--s,1)); }
+    50%{ transform:translateX(30px) scale(var(--s,1)); }
+    100%{ transform:translateX(0) scale(var(--s,1)); }
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    text-align:center;
+    padding:18px 20px 30px;
+    position:relative;
+  }
+
+  .eyebrow{
+    font-family:'Press Start 2P', monospace;
+    font-size:9px;
+    letter-spacing:2px;
+    color:var(--moss);
+    background:var(--leaf-light);
+    display:inline-block;
+    padding:6px 12px;
+    border:3px solid var(--forest);
+    box-shadow:4px 4px 0 var(--forest);
+    margin-bottom:22px;
+    animation: badgeBounce 3.2s ease-in-out infinite;
+  }
+
+  @keyframes badgeBounce{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-4px); }
+  }
+
+  h1{
+    font-family:'Press Start 2P', monospace;
+    font-size:clamp(22px, 6vw, 42px);
+    line-height:1.5;
+    margin:0;
+    color:var(--forest);
+    text-shadow:3px 3px 0 var(--sun);
+  }
+
+  h1 span{ color:var(--soil); text-shadow:3px 3px 0 var(--leaf); }
+
+  .subtitle{
+    max-width:520px;
+    margin:20px auto 0;
+    font-size:16px;
+    font-weight:600;
+    color:var(--moss);
+    line-height:1.6;
+  }
+
+  /* ---------- QR Section ---------- */
+  .qr-section{
+    display:flex;
+    justify-content:center;
+    padding:10px 20px 40px;
+  }
+
+  .qr-frame{
+    position:relative;
+    background:var(--paper);
+    border:4px solid var(--forest);
+    box-shadow:8px 8px 0 var(--soil);
+    padding:34px 34px 24px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    max-width:340px;
+  }
+
+  .qr-frame img{
+    width:220px;
+    height:220px;
+    border:4px solid var(--forest);
+    background:#fff;
+    padding:8px;
+  }
+
+  .qr-caption{
+    margin-top:16px;
+    font-family:'Press Start 2P', monospace;
+    font-size:10px;
+    color:var(--forest);
+    text-align:center;
+    letter-spacing:1px;
+  }
+
+  .qr-note{
+    margin-top:8px;
+    font-size:12px;
+    color:var(--moss);
+    text-align:center;
+  }
+
+  /* leaf vine corners — animated, but sit OUTSIDE the QR image so scanning is never affected */
+  .leaf-corner{
+    position:absolute;
+    width:34px;
+    height:34px;
+    background:var(--leaf);
+    border:3px solid var(--forest);
+    animation: leafBreathe 2.6s ease-in-out infinite;
+  }
+  .leaf-corner.tl{ top:-14px; left:-14px; border-radius:0 60% 0 0; animation-delay:0s; }
+  .leaf-corner.tr{ top:-14px; right:-14px; border-radius:60% 0 0 0; animation-delay:.4s; }
+  .leaf-corner.bl{ bottom:-14px; left:-14px; border-radius:0 0 0 60%; animation-delay:.8s; }
+  .leaf-corner.br{ bottom:-14px; right:-14px; border-radius:0 0 60% 0; animation-delay:1.2s; }
+
+  @keyframes leafBreathe{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.15); }
+  }
+
+  /* the QR image itself: intentionally NOT animated, kept fully static and high-contrast for reliable scanning */
+  .qr-frame img{ animation:none !important; }
+
+  /* ---------- Info blocks ---------- */
+  .info-row{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:18px;
+    padding:0 20px 50px;
+    max-width:900px;
+    margin:0 auto;
+  }
+
+  .info-card{
+    background:var(--paper);
+    border:3px solid var(--forest);
+    box-shadow:5px 5px 0 var(--leaf);
+    padding:18px 20px;
+    width:230px;
+    text-align:center;
+    animation: cardFloat 4s ease-in-out infinite;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+
+  .info-card:nth-child(1){ animation-delay:0s; }
+  .info-card:nth-child(2){ animation-delay:.5s; }
+  .info-card:nth-child(3){ animation-delay:1s; }
+
+  .info-card:hover{
+    transform:translate(-2px,-6px);
+    box-shadow:7px 11px 0 var(--leaf);
+  }
+
+  @keyframes cardFloat{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+
+  .info-card .icon{
+    animation: iconWiggle 3.6s ease-in-out infinite;
+  }
+
+  @keyframes iconWiggle{
+    0%,100%{ transform:rotate(0deg); }
+    25%{ transform:rotate(-8deg); }
+    75%{ transform:rotate(8deg); }
+  }
+
+  .info-card .icon{
+    font-size:28px;
+    margin-bottom:10px;
+    display:block;
+  }
+
+  .info-card h3{
+    font-family:'Press Start 2P', monospace;
+    font-size:11px;
+    color:var(--forest);
+    margin:0 0 8px;
+    line-height:1.6;
+  }
+
+  .info-card p{
+    font-size:13px;
+    color:var(--moss);
+    margin:0;
+    line-height:1.5;
+  }
+
+  /* ---------- Ground / pixel grass footer ---------- */
+  .ground{
+    position:relative;
+    height:90px;
+    background:var(--forest);
+    overflow:hidden;
+  }
+
+  .grass{
+    position:absolute;
+    top:-14px;
+    left:-6px;
+    width:calc(100% + 12px);
+    height:20px;
+    background:
+      linear-gradient(90deg, var(--leaf) 25%, transparent 25%) 0 0/24px 20px,
+      linear-gradient(90deg, var(--leaf) 25%, transparent 25%) 12px 0/24px 20px;
+    background-color:transparent;
+    animation: grassSway 3s ease-in-out infinite;
+    transform-origin:bottom;
+  }
+
+  @keyframes grassSway{
+    0%,100%{ transform:translateX(0); }
+    50%{ transform:translateX(6px); }
+  }
+
+  /* ---------- Contact badge ---------- */
+  .contact-badge{
+    position:fixed;
+    bottom:16px;
+    right:16px;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--forest);
+    color:var(--paper);
+    text-decoration:none;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    padding:10px 14px;
+    border:3px solid var(--sun);
+    box-shadow:4px 4px 0 var(--soil);
+    animation: badgePulse 2.4s ease-in-out infinite;
+  }
+
+  .contact-badge:hover{
+    background:var(--moss);
+  }
+
+  .contact-badge .phone-icon{
+    font-size:15px;
+  }
+
+  @keyframes badgePulse{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.04); }
+  }
+
+  @media (max-width:480px){
+    .contact-badge{
+      font-size:10.5px;
+      padding:8px 10px;
+      bottom:10px;
+      right:10px;
+    }
+  }
+
+  footer{
+    text-align:center;
+    padding:20px;
+    font-family:'Press Start 2P', monospace;
+    font-size:9px;
+    color:var(--sky);
+    letter-spacing:1px;
+  }
+
+  @media (max-width:480px){
+    .qr-frame{ padding:24px 20px 18px; }
+    .qr-frame img{ width:180px; height:180px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="leaf-field" id="leafField"></div>
+
+  <div class="sky-strip">
+    <div class="cloud c1 pixel"></div>
+    <div class="cloud c2 pixel"></div>
+    <div class="cloud c3 pixel"></div>
+  </div>
+
+  <header>
+    <span class="eyebrow">PROYECTO EDUCATIVO</span>
+    <h1>Pixel<span>Eco</span>Scratch</h1>
+    <p class="subtitle">Aprendiendo a programar mientras cuidamos el planeta — bloques, pixeles y naturaleza en un solo lugar 🌱</p>
+  </header>
+
+  <div class="qr-section">
+    <div class="qr-frame">
+      <img src="qr-final.png" alt="Código QR de PixelEcoScratch">
+      <div class="qr-caption">ESCANÉAME</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <span class="icon">🌳</span>
+      <h3>ECO</h3>
+      <p>Proyectos que enseñan cuidado ambiental jugando.</p>
+    </div>
+    <div class="info-card">
+      <span class="icon">🧩</span>
+      <h3>SCRATCH</h3>
+      <p>Programación por bloques, fácil y visual.</p>
+    </div>
+    <div class="info-card">
+      <span class="icon">👾</span>
+      <h3>PIXEL ART</h3>
+      <p>Gráficos retro que le dan personalidad al proyecto.</p>
+    </div>
+  </div>
+
+  <div class="ground">
+    <div class="grass"></div>
+  </div>
+
+  <footer>PIXELECOSCRATCH · 2026</footer>
+
+  <a class="contact-badge" href="tel:+51961896151">
+    <span class="phone-icon">📞</span> Contáctanos al: +51 961 896 151
+  </a>
+
+<script>
+  // Ambient floating leaf-pixels — fixed behind all content, never rendered over the QR frame
+  const field = document.getElementById('leafField');
+  const colors = ['#74C69D', '#B7E4C7', '#FFD60A', '#40663f'];
+  const total = 22;
+
+  for (let i = 0; i < total; i++) {
+    const el = document.createElement('div');
+    el.className = 'leaf-particle';
+    const size = 6 + Math.random() * 8;
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.borderRadius = Math.random() > .5 ? '50%' : '0 60% 0 60%';
+    const duration = 10 + Math.random() * 10;
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = (Math.random() * duration) + 's';
+    field.appendChild(el);
+  }
+</script>
+
+</body>
+</html>

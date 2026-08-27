@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel EcoScratch 4B — I.E. José Carlos Mariátegui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Bebas+Neue&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#C1121F;
+    --red-deep:#7A0C13;
+    --gold:#F4B400;
+    --gold-light:#FFDD66;
+    --black:#111111;
+    --ink:#1a1a1a;
+    --paper:#FFF8E7;
+    --green:#4CA771;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    background:var(--black);
+    color:var(--paper);
+    font-family:'Quicksand', sans-serif;
+    overflow-x:hidden;
+  }
+
+  /* ---------- Animated background ---------- */
+  .bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:
+      radial-gradient(circle at 20% 20%, var(--red-deep) 0%, transparent 45%),
+      radial-gradient(circle at 80% 75%, var(--red-deep) 0%, transparent 45%),
+      linear-gradient(160deg, var(--black) 0%, #260406 55%, var(--black) 100%);
+    background-size:200% 200%;
+    animation: bgShift 14s ease-in-out infinite;
+  }
+
+  @keyframes bgShift{
+    0%{ background-position:0% 0%; }
+    50%{ background-position:100% 100%; }
+    100%{ background-position:0% 0%; }
+  }
+
+  /* floating pixels (red/gold) */
+  .pixel-field{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  .px{
+    position:absolute;
+    bottom:-20px;
+    width:10px;
+    height:10px;
+    opacity:.85;
+    animation-name: floatUp;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes floatUp{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:.9; }
+    90%{ opacity:.7; }
+    100%{ transform:translateY(-110vh) rotate(180deg); opacity:0; }
+  }
+
+  /* leaf pixels (eco nod, small, subtle) */
+  .lf{
+    position:absolute;
+    bottom:-20px;
+    width:8px;
+    height:8px;
+    background:var(--green);
+    opacity:.6;
+    animation-name: floatUp;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* rotating gear echo (nods to the shield's gear icon) */
+  .gear-echo{
+    position:fixed;
+    z-index:1;
+    opacity:.06;
+    pointer-events:none;
+  }
+  .gear-echo.g1{ top:-60px; right:-60px; width:260px; height:260px; animation:spin 40s linear infinite; }
+  .gear-echo.g2{ bottom:-90px; left:-90px; width:320px; height:320px; animation:spin 55s linear infinite reverse; }
+
+  @keyframes spin{ from{transform:rotate(0);} to{transform:rotate(360deg);} }
+
+  /* ---------- Content ---------- */
+  main{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px 20px;
+  }
+
+  .shield-wrap{
+    position:relative;
+    width:150px;
+    margin-bottom:24px;
+    filter:drop-shadow(0 8px 18px rgba(0,0,0,.6));
+    animation: floatShield 5s ease-in-out infinite;
+  }
+
+  @keyframes floatShield{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+
+  .shield-wrap img{
+    width:100%;
+    display:block;
+  }
+
+  .ring{
+    position:absolute;
+    inset:-14px;
+    border:3px dashed var(--gold);
+    border-radius:50%;
+    opacity:.5;
+    animation: spin 18s linear infinite;
+  }
+
+  .eyebrow{
+    font-family:'Press Start 2P', monospace;
+    font-size:9px;
+    letter-spacing:2px;
+    color:var(--black);
+    background:var(--gold);
+    display:inline-block;
+    padding:7px 14px;
+    border:3px solid var(--black);
+    box-shadow:4px 4px 0 var(--red);
+    margin-bottom:26px;
+  }
+
+  h1{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:clamp(28px, 6vw, 52px);
+    letter-spacing:2px;
+    line-height:1.15;
+    margin:0 0 6px;
+    max-width:760px;
+    color:var(--gold-light);
+    text-shadow:
+      3px 3px 0 var(--red),
+      6px 6px 0 var(--black);
+  }
+
+  .brand-underline{
+    width:120px;
+    height:5px;
+    background:linear-gradient(90deg, var(--red), var(--gold));
+    margin:14px auto 22px;
+  }
+
+  .motivational{
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-style:italic;
+    font-size:clamp(15px, 2.4vw, 19px);
+    color:var(--paper);
+    max-width:520px;
+    margin:0 0 40px;
+    line-height:1.55;
+  }
+
+  .motivational::before,
+  .motivational::after{ content:'"'; color:var(--gold); }
+
+  /* CTA button */
+  .cta{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    font-family:'Press Start 2P', monospace;
+    font-size:13px;
+    letter-spacing:1px;
+    color:var(--black);
+    background:var(--gold);
+    text-decoration:none;
+    padding:18px 30px;
+    border:3px solid var(--black);
+    box-shadow:6px 6px 0 var(--red);
+    transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+  }
+
+  .cta:hover{
+    transform:translate(-3px,-3px);
+    box-shadow:9px 9px 0 var(--red);
+    background:var(--gold-light);
+  }
+
+  .cta:active{
+    transform:translate(0,0);
+    box-shadow:2px 2px 0 var(--red);
+  }
+
+  .cta .leaf-icon{
+    font-size:16px;
+  }
+
+  .school-tag{
+    margin-top:34px;
+    font-size:12px;
+    letter-spacing:1px;
+    color:var(--gold-light);
+    opacity:.8;
+  }
+
+  footer{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:16px;
+    font-family:'Press Start 2P', monospace;
+    font-size:8px;
+    color:var(--gold-light);
+    opacity:.7;
+    letter-spacing:1px;
+  }
+
+  @media (max-width:480px){
+    .cta{ font-size:11px; padding:15px 20px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="bg"></div>
+
+  <svg class="gear-echo g1" viewBox="0 0 100 100"><path fill="#F4B400" d="M50 10 L58 10 L60 22 L70 25 L78 17 L85 24 L77 32 L80 42 L92 44 L92 52 L80 54 L77 64 L85 72 L78 79 L70 71 L60 74 L58 86 L50 86 L48 74 L38 71 L30 79 L23 72 L31 64 L28 54 L16 52 L16 44 L28 42 L31 32 L23 24 L30 17 L38 25 L48 22 Z"/></svg>
+  <svg class="gear-echo g2" viewBox="0 0 100 100"><path fill="#C1121F" d="M50 10 L58 10 L60 22 L70 25 L78 17 L85 24 L77 32 L80 42 L92 44 L92 52 L80 54 L77 64 L85 72 L78 79 L70 71 L60 74 L58 86 L50 86 L48 74 L38 71 L30 79 L23 72 L31 64 L28 54 L16 52 L16 44 L28 42 L31 32 L23 24 L30 17 L38 25 L48 22 Z"/></svg>
+
+  <div class="pixel-field" id="pixelField"></div>
+
+  <main>
+    <div class="shield-wrap">
+      <div class="ring"></div>
+      <img src="logo-jcm.png" alt="Escudo I.E. José Carlos Mariátegui — Villa María del Triunfo">
+    </div>
+
+    <span class="eyebrow">I.E. JOSÉ CARLOS MARIÁTEGUI</span>
+
+    <h1>Página web promocional de<br>Pixel EcoScratch 4B</h1>
+    <div class="brand-underline"></div>
+
+    <p class="motivational">Cada bloque que programamos es una semilla para un futuro más verde y más creativo</p>
+
+    <a class="cta" href="PixelEcoScratch.html">
+      <span class="leaf-icon">🌱</span> INGRESAR AL PROYECTO
+    </a>
+
+    <div class="school-tag">VILLA MARÍA DEL TRIUNFO · 4° "B"</div>
+  </main>
+
+  <footer>PIXELECOSCRATCH · PROMOCIONAL 2026</footer>
+
+<script>
+  // Generate floating pixel particles (red/gold) + a few leaf pixels
+  const field = document.getElementById('pixelField');
+  const colors = ['#C1121F', '#F4B400', '#FFDD66', '#7A0C13'];
+  const totalPixels = 26;
+
+  for(let i=0;i<totalPixels;i++){
+    const el = document.createElement('div');
+    el.className = 'px';
+    const size = 6 + Math.random()*10;
+    el.style.width = size+'px';
+    el.style.height = size+'px';
+    el.style.left = Math.random()*100+'vw';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    const duration = 8 + Math.random()*10;
+    el.style.animationDuration = duration+'s';
+    el.style.animationDelay = (Math.random()*duration)+'s';
+    field.appendChild(el);
+  }
+
+  const totalLeaves = 8;
+  for(let i=0;i<totalLeaves;i++){
+    const el = document.createElement('div');
+    el.className = 'lf';
+    el.style.left = Math.random()*100+'vw';
+    const duration = 10 + Math.random()*10;
+    el.style.animationDuration = duration+'s';
+    el.style.animationDelay = (Math.random()*duration)+'s';
+    field.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
